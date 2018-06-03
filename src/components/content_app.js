@@ -1,8 +1,8 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import Detail from './detail'
-import { searchWord, openLink } from '../message'
-import { gapS, colorMuted } from './style'
+import React, { Component } from "react"
+import PropTypes from "prop-types"
+import Detail from "./detail"
+import { searchWord, openLink } from "../message"
+import { gapS, colorMuted } from "./style"
 
 const WIDTH = 400
 const MAX_HEIGHT = 300
@@ -14,28 +14,35 @@ const styles = {
   container: {
     padding: `${gapS}px`,
     border: `1px solid ${colorMuted}`,
-    position: 'absolute',
-    boxSizing: 'border-box',
+    position: "absolute",
+    boxSizing: "border-box",
     zIndex: 1000000,
     width: WIDTH,
     maxHeight: MAX_HEIGHT,
-    overflow: 'auto',
-    backgroundColor: '#fff',
-  },
+    overflow: "auto",
+    backgroundColor: "#fff"
+  }
 }
 
 function getOffsets() {
-  const body = document.querySelector('body')
+  const body = document.querySelector("body")
   const scrollTop = window.pageYOffset || document.scrollTop || body.scrollTop
-  const scrollLeft = window.pageXOffset || document.scrollLeft || body.scrollLeft
+  const scrollLeft =
+    window.pageXOffset || document.scrollLeft || body.scrollLeft
 
   return { top: Math.round(scrollTop), left: Math.round(scrollLeft) }
 }
 
 function getViewportSize() {
   return {
-    width: Math.max(document.documentElement.clientWidth, window.innerWidth || 0),
-    height: Math.max(document.documentElement.clientHeight, window.innerHeight || 0),
+    width: Math.max(
+      document.documentElement.clientWidth,
+      window.innerWidth || 0
+    ),
+    height: Math.max(
+      document.documentElement.clientHeight,
+      window.innerHeight || 0
+    )
   }
 }
 
@@ -47,33 +54,37 @@ function getPositionAdjustment(position) {
   // const maxHeight = offsetTop + height
   // const elementHeight = top + containerHeight
   const allowLeftAdjustment = width > WIDTH
-  const shouldLeftAdjustment = left + (WIDTH * LEFT_PAD_PERCENTAGE) > width + offsetLeft
+  const shouldLeftAdjustment =
+    left + WIDTH * LEFT_PAD_PERCENTAGE > width + offsetLeft
 
   let leftAdjustment = 0
 
   if (allowLeftAdjustment && shouldLeftAdjustment) {
-    leftAdjustment = left + (WIDTH * LEFT_PAD_PERCENTAGE) - width - offsetLeft
+    leftAdjustment = left + WIDTH * LEFT_PAD_PERCENTAGE - width - offsetLeft
   }
 
   return {
     atTop: false,
-    leftAdjustment,
+    leftAdjustment
   }
 }
 
 function getLayoutPosition(position, lineHeight) {
-  const padHeight = (typeof lineHeight === 'number')
-    ? Math.max(ASSUME_LINE_HEIGHT, lineHeight) : ASSUME_LINE_HEIGHT
+  const padHeight =
+    typeof lineHeight === "number"
+      ? Math.max(ASSUME_LINE_HEIGHT, lineHeight)
+      : ASSUME_LINE_HEIGHT
   const { leftAdjustment } = getPositionAdjustment(position)
 
   let { top, left } = position
-  const originLeftPos = left - (WIDTH * LEFT_PAD_PERCENTAGE) - leftAdjustment
+  const originLeftPos = left - leftAdjustment
 
   left = Math.max(originLeftPos, PADDING_LEFT)
   top += padHeight
 
   return {
-    top, left,
+    top,
+    left
   }
 }
 
@@ -90,7 +101,7 @@ class ContentApp extends Component {
       display: false,
       isLoading: false,
       explain: null,
-      currentWord: content,
+      currentWord: content
     }
   }
 
@@ -116,35 +127,38 @@ class ContentApp extends Component {
     this.setState({
       currentWord: word,
       display: false,
-      isLoading: true,
+      isLoading: true
     })
 
     // try to not change screen too frequently
     setTimeout(() => {
       if (!fullfilled) {
         this.setState({
-          display: true,
+          display: true
         })
       }
     }, 1000)
 
-    searchWord(word).then((res) => {
-      if (word !== this.state.currentWord) {
-        return
-      }
+    searchWord(word)
+      .then(res => {
+        if (word !== this.state.currentWord) {
+          return
+        }
 
-      this.setState({
-        display: true,
-        isLoading: false,
-        currentWord: word,
-        explain: res,
+        this.setState({
+          display: true,
+          isLoading: false,
+          currentWord: word,
+          explain: res
+        })
+
+        fullfilled = true
       })
-
-      fullfilled = true
-    }).catch((err) => { // eslint-disable-line
-      // TODO:
-      fullfilled = true
-    })
+      .catch(err => {
+        // eslint-disable-line
+        // TODO:
+        fullfilled = true
+      })
   }
 
   render() {
@@ -156,18 +170,19 @@ class ContentApp extends Component {
       return null
     }
 
-    const containerStyle = Object.assign({},
+    const containerStyle = Object.assign(
+      {},
       styles.container,
       getLayoutPosition(position, lineHeight),
-      !display ? {
-        display: 'none',
-      } : null,
+      !display
+        ? {
+            display: "none"
+          }
+        : null
     )
 
     return (
-      <div
-        style={containerStyle}
-      >
+      <div style={containerStyle}>
         {isLoading ? (
           <div>正在加载 &quot;{currentWord}&quot; ...</div>
         ) : (
@@ -192,11 +207,11 @@ ContentApp.propTypes = {
   hide: bool.isRequired,
   position: object.isRequired,
   content: string.isRequired,
-  options: object.isRequired,
+  options: object.isRequired
 }
 
 ContentApp.defaultProps = {
-  lineHeight: ASSUME_LINE_HEIGHT,
+  lineHeight: ASSUME_LINE_HEIGHT
 }
 
 export default ContentApp
