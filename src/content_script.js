@@ -66,7 +66,7 @@ function getPosition(selection) {
   }
 
   let elem = range.startContainer.firstElementChild
-  if (elem !== undefined) {
+  if (elem !== undefined && elem !== null) {
     const rawString = selection.toString()
     elem = Array.from(range.startContainer.children).filter(element => {
       try {
@@ -75,7 +75,7 @@ function getPosition(selection) {
         return false
       }
     })[0]
-
+    
     if (elem.nodeName == "INPUT" || elem.nodeName == "TEXTAREA") {
       const { top, left } = elem.getBoundingClientRect()
       const rectStart = getCaretCoordinates(elem, elem.selectionStart)
