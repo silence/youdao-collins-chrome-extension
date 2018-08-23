@@ -68,18 +68,22 @@ function getPosition(selection) {
   let elem = range.startContainer.firstElementChild
   if (elem !== undefined && elem !== null) {
     const rawString = selection.toString()
-    elem = Array.from(range.startContainer.children).filter(element => {
+    let newElem = Array.from(range.startContainer.children).filter(element => {
       try {
         return element.value.includes(rawString)
       } catch (e) {
         return false
       }
     })[0]
+    if (newElem === undefined) {
+      newElem = elem
+      rect = range.getBoundingClientRect()
+    }
     
-    if (elem.nodeName == "INPUT" || elem.nodeName == "TEXTAREA") {
-      const { top, left } = elem.getBoundingClientRect()
-      const rectStart = getCaretCoordinates(elem, elem.selectionStart)
-      const rectEnd = getCaretCoordinates(elem, elem.selectionEnd)
+    if (newElem.nodeName == "INPUT" || newElem.nodeName == "TEXTAREA") {
+      const { top, left } = newElem.getBoundingClientRect()
+      const rectStart = getCaretCoordinates(newElem, newElem.selectionStart)
+      const rectEnd = getCaretCoordinates(newElem, newElem.selectionEnd)
       rect = {
         top: top + rectEnd.top,
         left: left + rectEnd.left,
@@ -88,6 +92,7 @@ function getPosition(selection) {
     }
   } else {
     rect = range.getBoundingClientRect()
+    if (rect === undefined) {return null}
   }
 
   const { top, left, width } = rect
